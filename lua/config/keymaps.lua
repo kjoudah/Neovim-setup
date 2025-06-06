@@ -63,4 +63,14 @@ vim.keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", { norema
 vim.keymap.set("v", "<C-_>", "<Plug>(comment_toggle_linewise_visual)", { noremap = false, desc = "Toggle Comment (Selection)" })
 
 
+-- format
+vim.keymap.set({"n", "v"}, "<leader>F", function() -- Use <leader>F (e.g., Space + F)
+  require("conform").format({ async = true, lsp_fallback = 'never' }) -- Or lsp_fallback = true if you want that
+end, { desc = "Format Code (Conform)" })
 
+-- -- Git / Fugitive Keymaps
+vim.keymap.set("n", "<leader>gS", "<cmd>Git<CR>", { desc = "Git Status (Fugitive)" })
+vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git Commit" })
+vim.keymap.set("n", "<leader>gP", "<cmd>Git push<CR>", { desc = "Git Push" }) -- Note: Uppercase P
+vim.keymap.set("n", "<leader>gl", "<cmd>Git pull<CR>", { desc = "Git Pull" })
+vim.keymap.set("n", "<leader>gb", "<cmd>G blame<CR>", { desc = "Git Blame" })

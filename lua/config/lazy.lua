@@ -117,13 +117,13 @@ require("lazy").setup({
         end
 
         -- Navigation
-        map('n', 'gn', function()
+        map('n', ']c', function()
           if vim.wo.diff then return ']c' end
           vim.schedule(function() gs.next_hunk() end)
           return '<Ignore>'
         end, {expr = true, desc = "Next Hunk"})
 
-        map('n', 'gp', function()
+        map('n', '[c', function()
           if vim.wo.diff then return '[c' end
           vim.schedule(function() gs.prev_hunk() end)
           return '<Ignore>'
@@ -132,13 +132,12 @@ require("lazy").setup({
         -- Actions
         map({'n', 'v'}, '<leader>hs', gs.stage_hunk, {desc = "Stage Hunk"})
         map({'n', 'v'}, '<leader>hr', gs.reset_hunk, {desc = "Reset Hunk"})
-        map('n', '<leader>gS', gs.stage_buffer, {desc = "Stage Buffer"})
+        --map('n', '<leader>gS', gs.stage_buffer, {desc = "Stage Buffer"})
         map('n', '<leader>gR', gs.reset_buffer, {desc = "Reset Buffer"})
         map('n', '<leader>gu', gs.undo_stage_hunk, {desc = "Undo Stage Hunk"})
         map('n', '<leader>gp', gs.preview_hunk, {desc = "Preview Hunk"})
         map('n', '<leader>gb', function() gs.blame_line{full=true} end, {desc = "Blame Line (Full)"})
         map('n', '<leader>gB', gs.toggle_current_line_blame, {desc = "Toggle Current Line Blame"})
-        map('n', '<leader>gd', gs.diffthis, {desc = "Diff This ~ Local"}) -- Diff against index
         map('n', '<leader>gD', function() gs.diffthis('~') end, {desc = "Diff This ~ HEAD"}) -- Diff against last commit (HEAD)
 
         -- Text object
@@ -160,8 +159,6 @@ require("lazy").setup({
       require("mason").setup()
       require("mason-lspconfig").setup({
         ensure_installed = {
-          'typescript-language-server',
-          'eslint'
         }, 
       })
       local lspconfig = require('lspconfig')
@@ -302,6 +299,41 @@ require("lazy").setup({
     opts = {
       -- your which-key custom options
     }
-  }
+  },
+  {
+    -- Formatting with conform.nvim
+    {
+      'stevearc/conform.nvim',
+      event = { "BufWritePre" }, 
+      cmd = { "ConformInfo" },
+      opts = {
+        formatters_by_ft = {
+          javascript = { "prettierd", "prettier" }, 
+          typescript = { "prettierd", "prettier" },
+          javascriptreact = { "prettierd", "prettier" }, 
+          typescriptreact = { "prettierd", "prettier" },
+          json = { "prettierd", "prettier" },
+          yaml = { "prettierd", "prettier" },
+          markdown = { "prettierd", "prettier" },
+          html = { "prettierd", "prettier" },
+          css = { "prettierd", "prettier" },
+          scss = { "prettierd", "prettier" },
+          lua = { "stylua" }, 
+        },
+
+        format_on_save = {
+          timeout_ms = 1000,      
+          lsp_fallback = true,    
+        },
+
+      },
+      -- end,
+    },
+  },
+  -- Git Integration with fugitive
+  {
+    "tpope/vim-fugitive",
+    cmd = { "Git", "G" }, -- Lazy-load on these commands
+  },
 })
 
