@@ -9,3 +9,4 @@ opt.shiftwidth = 2
 opt.expandtab = true
 opt.clipboard = "unnamedplus"
 opt.smartcase = true
+opt.splitright = true
