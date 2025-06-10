@@ -16,6 +16,25 @@ vim.keymap.set("n", "<leader>fs", ":Telescope grep_string<CR>", { desc = "Find s
 
 -- Telescope Git
 vim.keymap.set("n", "<leader>gs", ":Telescope git_status<CR>", { desc = "Git status" })
+vim.keymap.set("n", "<leader>gD", "<cmd>DiffviewOpen main<CR>", { desc = "Diffview against main branch" })
+
+vim.keymap.set("n", "<leader>gd", function()
+  require("telescope.builtin").git_branches({
+    attach_mappings = function(prompt_bufnr, map_fn)
+      -- This function is called when the Telescope picker is opened
+      -- We are remapping the default action for <CR> (Enter)
+      map_fn("i", "<CR>", function(bufnr)
+        local selection = require("telescope.actions.state").get_selected_entry()
+        require("telescope.actions").close(bufnr)
+        require("diffview").open(selection.value .. "...HEAD")
+      end)
+      return true
+    end,
+  })
+end, { desc = "Diffview against selected branch" })
+
+-- A bonus keymap for viewing the history of the current file
+vim.keymap.set("n", "<leader>gfh", "<cmd>DiffviewFileHistory %<CR>", { desc = "Git File History (Diffview)"})
 
 -- Telescope search (exact variants)
 vim.keymap.set("n", "<leader>fG", function()

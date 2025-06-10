@@ -97,7 +97,7 @@ require("lazy").setup({
         map('n', '<leader>gp', gs.preview_hunk, {desc = "Preview Hunk"})
         map('n', '<leader>gb', function() gs.blame_line{full=true} end, {desc = "Blame Line (Full)"})
         map('n', '<leader>gB', gs.toggle_current_line_blame, {desc = "Toggle Current Line Blame"})
-        map('n', '<leader>gD', function() gs.diffthis('~') end, {desc = "Diff This ~ HEAD"}) -- Diff against last commit (HEAD)
+        --map('n', '<leader>gD', function() gs.diffthis('~') end, {desc = "Diff This ~ HEAD"}) -- Diff against last commit (HEAD)
 
         -- Text object
         map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {desc = "Select Hunk (Inner Hunk text object)"})
@@ -131,6 +131,7 @@ require("lazy").setup({
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { silent = true })
       vim.keymap.set('n', 'gr', vim.lsp.buf.references, { silent = true })
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
+      vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = "LSP Code Action" })
       vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { silent = true })
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP Actions',
@@ -260,5 +261,10 @@ require("lazy").setup({
     config = function(_, opts)
       require("colorizer").setup(opts)
     end
+  },
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
   },
 })
