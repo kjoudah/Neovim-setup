@@ -262,11 +262,17 @@ require("lazy").setup({
       require("colorizer").setup(opts)
     end
   },
-  {
-    "sindrets/diffview.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
-    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
-  },
+{
+  "sindrets/diffview.nvim",
+  dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
+  cmd = { 
+    "DiffviewOpen", 
+    "DiffviewClose", 
+    "DiffviewToggleFiles", 
+    "DiffviewFocusFiles",
+    "DiffviewFileHistory",
+    "DiffviewRefresh"
+  }},
 {
     "nvim-tree/nvim-tree.lua",
     version = "*",
