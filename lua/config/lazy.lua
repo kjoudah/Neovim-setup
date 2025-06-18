@@ -267,4 +267,38 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
   },
+{
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons", -- For file icons
+    },
+    config = function()
+      require("nvim-tree").setup({
+        sort_by = "case_sensitive",
+        view = {
+          width = 30,
+          side = "left",
+        },
+        renderer = {
+          group_empty = true,
+          icons = {
+            show = {
+              file = true,
+              folder = true,
+              folder_arrow = true,
+              git = true,
+            },
+          },
+        },
+        filters = {
+          dotfiles = false, -- Show dotfiles (like .env, .gitignore)
+        },
+        git = {
+          enable = true,
+          ignore = false,
+        },
+      })
+    end,
+  },
 })

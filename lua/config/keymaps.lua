@@ -93,3 +93,6 @@ vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git Commit" }
 vim.keymap.set("n", "<leader>gP", "<cmd>Git push<CR>", { desc = "Git Push" }) -- Note: Uppercase P
 vim.keymap.set("n", "<leader>gl", "<cmd>Git pull<CR>", { desc = "Git Pull" })
 vim.keymap.set("n", "<leader>gb", "<cmd>G blame<CR>", { desc = "Git Blame" })
+
+-- nvim-tree
+vim.keymap.set("n", "<leader>ft", "<cmd>NvimTreeFindFile<CR>", { desc = "Toggle File Explorer (NvimTree)" })
