@@ -64,6 +64,15 @@ require("lazy").setup({
     "numToStr/Comment.nvim",
     opts = {},
   },
+  -- Nvim surround
+{
+  "kylechui/nvim-surround",
+  version = "*",
+  event = "VeryLazy",
+  config = function()
+    require("nvim-surround").setup({})
+  end
+},
   -- Gitsigns
   {
     "lewis6991/gitsigns.nvim",
@@ -104,35 +113,45 @@ require("lazy").setup({
       end
     }
   },
-  -- LSP Support
+  -- LSP Support (Updated for Neovim 0.11+)
   {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-    },
+    "williamboman/mason.nvim",
     config = function()
       require("mason").setup()
+    end,
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = {
-        }, 
+        ensure_installed = {},
       })
-      local lspconfig = require('lspconfig')
-      lspconfig.sourcekit.setup({ -- Swift LSP
+      
+      -- Configure SourceKit LSP using built-in vim.lsp.config
+      vim.lsp.config.sourcekit = {
         cmd = { "sourcekit-lsp" },
         filetypes = { "swift", "objc", "objcpp" },
-        capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } },
+        capabilities = { 
+          workspace = { 
+            didChangeWatchedFiles = { dynamicRegistration = true } 
+          } 
+        },
         root_dir = function(fname)
-          return require("lspconfig.util").find_git_ancestor(fname)
-            or require("lspconfig.util").root_pattern("Package.swift", "*.xcodeproj", "*.xcworkspace")(fname)
-            or vim.fn.getcwd()
+          return vim.fs.find({ ".git", "Package.swift", "*.xcodeproj", "*.xcworkspace" }, {
+            path = fname,
+            upward = true,
+          })[1] or vim.fn.getcwd()
         end,
-      })
+      }
+      
+      -- LSP Keymaps
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { silent = true })
       vim.keymap.set('n', 'gr', vim.lsp.buf.references, { silent = true })
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
-      vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = "LSP Code Action" })
+      vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, { desc = "LSP Code Action" })
       vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { silent = true })
+      
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP Actions',
         callback = function(args)
@@ -211,33 +230,28 @@ require("lazy").setup({
   },
   -- Formatting with conform.nvim
   {
-    -- Formatting with conform.nvim
-    {
-      'stevearc/conform.nvim',
-      event = { "BufWritePre" }, 
-      cmd = { "ConformInfo" },
-      opts = {
-        formatters_by_ft = {
-          javascript = { "prettierd", "prettier" }, 
-          typescript = { "prettierd", "prettier" },
-          javascriptreact = { "prettierd", "prettier" }, 
-          typescriptreact = { "prettierd", "prettier" },
-          json = { "prettierd", "prettier" },
-          yaml = { "prettierd", "prettier" },
-          markdown = { "prettierd", "prettier" },
-          html = { "prettierd", "prettier" },
-          css = { "prettierd", "prettier" },
-          scss = { "prettierd", "prettier" },
-          lua = { "stylua" }, 
-        },
-
-        format_on_save = {
-          timeout_ms = 1000,      
-          lsp_fallback = true,    
-        },
-
+    'stevearc/conform.nvim',
+    event = { "BufWritePre" }, 
+    cmd = { "ConformInfo" },
+    opts = {
+      formatters_by_ft = {
+        javascript = { "prettierd", "prettier" }, 
+        typescript = { "prettierd", "prettier" },
+        javascriptreact = { "prettierd", "prettier" }, 
+        typescriptreact = { "prettierd", "prettier" },
+        json = { "prettierd", "prettier" },
+        yaml = { "prettierd", "prettier" },
+        markdown = { "prettierd", "prettier" },
+        html = { "prettierd", "prettier" },
+        css = { "prettierd", "prettier" },
+        scss = { "prettierd", "prettier" },
+        lua = { "stylua" }, 
       },
-      format_on_save = { timeout_ms = 1000, lsp_fallback = true },
+
+      format_on_save = {
+        timeout_ms = 1000,      
+        lsp_fallback = true,    
+      },
     },
   },
   -- Git Integration with fugitive
@@ -262,18 +276,19 @@ require("lazy").setup({
       require("colorizer").setup(opts)
     end
   },
-{
-  "sindrets/diffview.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
-  cmd = { 
-    "DiffviewOpen", 
-    "DiffviewClose", 
-    "DiffviewToggleFiles", 
-    "DiffviewFocusFiles",
-    "DiffviewFileHistory",
-    "DiffviewRefresh"
-  }},
-{
+  {
+    "sindrets/diffview.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- For file icons
+    cmd = { 
+      "DiffviewOpen", 
+      "DiffviewClose", 
+      "DiffviewToggleFiles", 
+      "DiffviewFocusFiles",
+      "DiffviewFileHistory",
+      "DiffviewRefresh"
+    }
+  },
+  {
     "nvim-tree/nvim-tree.lua",
     version = "*",
     dependencies = {
