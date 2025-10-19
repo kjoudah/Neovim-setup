@@ -96,3 +96,6 @@ vim.keymap.set("n", "<leader>gb", "<cmd>G blame<CR>", { desc = "Git Blame" })
 
 -- nvim-tree
 vim.keymap.set("n", "<leader>ft", "<cmd>NvimTreeFindFile<CR>", { desc = "Toggle File Explorer (NvimTree)" })
+
+-- buffer and window management
+vim.keymap.set("n", "<leader>bo", ":%bd|e#<CR>", { desc = "Close all other buffers" })

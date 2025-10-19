@@ -10,4 +10,5 @@ opt.smartcase = true
 opt.ignorecase = true
 opt.expandtab = true
 opt.clipboard = "unnamedplus"
-opt.splitright = true
+opt.splitright = trueA
+opt.swapfile = false
