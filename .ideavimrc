@@ -1,0 +1,154 @@
+" =============================================================================
+" =============================================================================
+" My Unified .ideavimrc (v20) - Structural Editing & Nav
+"
+" Reload with: :source ~/.ideavimrc
+" =============================================================================
+
+" --- LEADER KEY ---
+let mapleader = ' '
+
+" --- OPTIONS ---
+set number
+set relativenumber
+set clipboard=unnamedplus
+set splitright
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set easymotion
+
+" --- EMULATED PLUGINS ---
+set surround        " Enables ys, cs, ds commands
+set argtextobj      " ENABLED: Enables daa, cia, via (Argument text objects)
+
+" -- Yanky.nvim Emulation --
+set highlightedyank " Visual flash on yank
+let g:highlightedyank_highlight_duration = 150
+
+" =============================================================================
+" KEYMAPS - Using the <Action>(ActionName) syntax
+" =============================================================================
+
+" -- Focus Management --
+map <leader>bo <Action>(HideAllWindows)
+map <leader>z <Action>(ToggleDistractionFreeMode)
+
+" -- Basic Operations --
+map <leader>w :w<CR>
+map <leader>q :q<CR>
+map <C-_> <Action>(CommentByLineComment)
+vnoremap <C-_> <Action>(CommentByLineComment)
+
+" -- FORMATTING & IMPORTS --
+" Runs OptimizeImports first, then ReformatCode.
+" Fixes indentation AND adds missing imports in one keystroke.
+map <leader>F <Action>(OptimizeImports)<Action>(ReformatCode)
+
+" -- Search & Navigation --
+map <leader>ff <Action>(SearchEverywhere)
+map <leader>fr <Action>(RecentFiles)
+map <leader>fg <Action>(FindInPath)
+
+" -- Code Intelligence (LSP) --
+map gd <Action>(GotoDeclaration)
+map gD <Action>(GotoTypeDeclaration)
+map gr <Action>(FindUsages)
+map K  <Action>(QuickJavaDoc)
+map <leader>ca <Action>(ShowIntentionActions)
+map <leader>rn <Action>(RenameElement)
+map <leader>ls <Action>(FileStructurePopup)
+map <leader>e <Action>(ShowErrorDescription)
+
+" -- Clipboard / Yank History --
+map <leader>yh <Action>(PasteMultiple)
+
+" -- Terminal & File Explorer --
+map <leader>t1 <Action>(ActivateTerminalToolWindow)
+map <leader>ft <Action>(ActivateProjectToolWindow)
+
+" -- Word Deletion in Insert Mode --
+inoremap <C-BS> <C-w>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+
+" =============================================================================
+" STRUCTURAL EDITING (New)
+" =============================================================================
+
+" Move Element Left/Right (Swaps arguments, array items, etc.)
+" Works on the element under the cursor.
+map <leader>[ <Action>(MoveElementLeft)
+map <leader>] <Action>(MoveElementRight)
+
+" =============================================================================
+" GIT NAMESPACE (All Git commands start with <leader>g)
+" =============================================================================
+
+" 1. Diff & Review (The 'gs' Workflow)
+" Open the Diff Window (Review Mode)
+map <leader>gs <Action>(ChangesView.Diff)
+" Open the Changes Tool Window (File List)
+map <leader>gd <Action>(ActivateChangesToolWindow)
+
+" 2. Standard Git Actions
+map <leader>gc <Action>(CheckinProject)
+map <leader>gl <Action>(Vcs.UpdateProject)
+map <leader>gp <Action>(Vcs.Push)
+map <leader>gb <Action>(Annotate)
+map <leader>gfh <Action>(Vcs.ShowTabbedFileHistory)
+
+" 3. Hunk Actions
+map <leader>ghs <Action>(Vcs.StageChangedLines)
+map <leader>ghr <Action>(Vcs.RollbackChangedLines)
+
+" =============================================================================
+" NAVIGATION (Changes, Files, Errors)
+" =============================================================================
+
+" 1. Change Navigation (Small Jump)
+" RESTORED: 'VcsShowNextChangeMarker' works in the Editor AND Diff Window.
+map ]c <Action>(VcsShowNextChangeMarker)
+map [c <Action>(VcsShowPrevChangeMarker)
+
+" 2. File Navigation (Big Jump)
+" Diff Window Only: Jumps to the next file in the list.
+map ]C <Action>(Diff.NextFile)
+map [C <Action>(Diff.PrevFile)
+
+" 3. Error Navigation
+map ]d <Action>(GotoNextError)
+map [d <Action>(GotoPreviousError)
+
+
+" =============================================================================
+" UNIVERSAL TOOLS (Flash & Harpoon)
+" =============================================================================
+
+" --- FLASH / ACEJUMP ---
+" 1. Normal Mode: 's' to Jump
+nmap f <Plug>(easymotion-s)
+
+" 2. Visual Mode: 's' to Jump (extends selection)
+vmap f <Plug>(easymotion-s)
+
+" 3. Operator Mode: 'z' to Jump
+omap z <Plug>(easymotion-s)
+
+" 4. Smart Select (Shift+s)
+nmap S <Action>(EditorSelectWord)
+
+
+" --- HARPOON (Harpooner Plugin) ---
+
+" 1. Admin Commands (Start with <leader>h)
+nmap <leader>ha <Action>(HarpoonerToggleFile)
+nmap <leader>hh <Action>(HarpoonerToggleQuickMenu)
+nmap <C-e> <Action>(HarpoonerShow)
+
+" 2. Navigation Commands
+nmap <leader>1 <Action>(HarpoonerOpenFile0)
+nmap <leader>2 <Action>(HarpoonerOpenFile1)
+nmap <leader>3 <Action>(HarpoonerOpenFile2)
+nmap <leader>4 <Action>(HarpoonerOpenFile3)
