@@ -90,9 +90,34 @@ end, { desc = "Format Code (Conform)" })
 -- -- Git / Fugitive Keymaps
 vim.keymap.set("n", "<leader>gS", "<cmd>Git<CR>", { desc = "Git Status (Fugitive)" })
 vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git Commit" })
-vim.keymap.set("n", "<leader>gP", "<cmd>Git push<CR>", { desc = "Git Push" }) -- Note: Uppercase P
+vim.keymap.set("n", "<leader>gp", "<cmd>Git push<CR>", { desc = "Git Push" }) -- matches IdeaVim <leader>gp
 vim.keymap.set("n", "<leader>gl", "<cmd>Git pull<CR>", { desc = "Git Pull" })
 vim.keymap.set("n", "<leader>gb", "<cmd>G blame<CR>", { desc = "Git Blame" })
+vim.keymap.set({"n", "v"}, "<leader>go", "<cmd>GBrowse<CR>", { desc = "Git Open on GitHub" })
+
+-- LSP keymaps (mirrors IdeaVim: gd, gr, K, <leader>ca, <leader>rn, <leader>e)
+vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>",   { desc = "Go to Definition" })
+vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>",    { desc = "Go to References" })
+vim.keymap.set("n", "K",  vim.lsp.buf.hover,                       { desc = "Documentation" })
+vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action,         { desc = "Code Actions" })
+vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename,              { desc = "Rename Symbol" })
+vim.keymap.set("n", "<leader>e",  vim.diagnostic.open_float,       { desc = "Show Error" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next,               { desc = "Next Diagnostic" })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev,               { desc = "Prev Diagnostic" })
+
+-- Window navigation (mirrors IdeaVim <leader>wh/j/k/l)
+vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Window Left" })
+vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Window Down" })
+vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Window Up" })
+vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Window Right" })
+vim.keymap.set("n", "<leader>wc", "<cmd>close<CR>",   { desc = "Close Window" })
+vim.keymap.set("n", "<leader>wo", "<cmd>only<CR>",    { desc = "Close Other Windows" })
+
+-- Move lines (mirrors IdeaVim <A-j>/<A-k> MoveStatementDown/Up)
+vim.keymap.set("n", "<A-j>", "<cmd>m .+1<CR>==",       { desc = "Move Line Down" })
+vim.keymap.set("n", "<A-k>", "<cmd>m .-2<CR>==",       { desc = "Move Line Up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv",      { desc = "Move Selection Down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv",      { desc = "Move Selection Up" })
 
 -- nvim-tree
 vim.keymap.set("n", "<leader>ft", "<cmd>NvimTreeFindFile<CR>", { desc = "Toggle File Explorer (NvimTree)" })

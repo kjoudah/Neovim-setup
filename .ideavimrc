@@ -77,6 +77,7 @@ nmap <leader>gp <Action>(Vcs.Push)
 nmap <leader>ghs <Action>(Vcs.StageChangedLines)
 nmap <leader>ghr <Action>(Vcs.RollbackChangedLines)
 nmap <leader>gfh <Action>(Vcs.ShowTabbedFileHistory)
+nmap <leader>go <Action>(Github.Open.In.Browser)
 
 
 " =============================================================================

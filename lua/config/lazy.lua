@@ -384,17 +384,19 @@ require("lazy").setup({
 
         -- Actions
 
-        map({ 'n', 'v' }, '<leader>hs', gs.stage_hunk, { desc = "Stage Hunk" })
+        map({ 'n', 'v' }, '<leader>hs',  gs.stage_hunk,  { desc = "Stage Hunk" })
+        map({ 'n', 'v' }, '<leader>ghs', gs.stage_hunk,  { desc = "Stage Hunk (ghs)" })  -- matches IdeaVim <leader>ghs
 
-        map({ 'n', 'v' }, '<leader>hr', gs.reset_hunk, { desc = "Reset Hunk" })
+        map({ 'n', 'v' }, '<leader>hr',  gs.reset_hunk,  { desc = "Reset Hunk" })
+        map({ 'n', 'v' }, '<leader>ghr', gs.reset_hunk,  { desc = "Reset Hunk (ghr)" })  -- matches IdeaVim <leader>ghr
 
         --map('n', '<leader>gS', gs.stage_buffer, {desc = "Stage Buffer"})
 
-        map('n', '<leader>gR', gs.reset_buffer, { desc = "Reset Buffer" })
+        map('n', '<leader>gR',  gs.reset_buffer,    { desc = "Reset Buffer" })
 
-        map('n', '<leader>gu', gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
+        map('n', '<leader>gu',  gs.undo_stage_hunk, { desc = "Undo Stage Hunk" })
 
-        map('n', '<leader>gp', gs.preview_hunk, { desc = "Preview Hunk" })
+        map('n', '<leader>ghp', gs.preview_hunk,    { desc = "Preview Hunk" })  -- freed <leader>gp for Git Push
 
         map('n', '<leader>gb', function() gs.blame_line { full = true } end, { desc = "Blame Line (Full)" })
 
@@ -452,36 +454,18 @@ require("lazy").setup({
 
 
 
-      -- Configure SourceKit LSP using built-in vim.lsp.config
-
-      vim.lsp.config.sourcekit = {
-
+      -- Configure SourceKit LSP using native Neovim 0.11+ API
+      vim.lsp.config("sourcekit", {
         cmd = { "sourcekit-lsp" },
-
         filetypes = { "swift", "objc", "objcpp" },
-
+        root_markers = { "buildServer.json", "Package.swift", ".git", "*.xcworkspace", "*.xcodeproj" },
         capabilities = {
-
           workspace = {
-
             didChangeWatchedFiles = { dynamicRegistration = true }
-
           }
-
         },
-        root_dir = function(fname)
-          return vim.fs.find({ ".git", "Package.swift", "*.xcodeproj", "*.xcworkspace" }, {
-
-            path = fname,
-
-            upward = true,
-
-          })[1] or vim.fn.getcwd()
-        end,
-
-      }
-
-
+      })
+      vim.lsp.enable("sourcekit")
 
       -- LSP Keymaps
 
@@ -569,7 +553,7 @@ require("lazy").setup({
     event = { "BufReadPost", "BufNewFile" },
 
     config = function()
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter.config").setup({
 
         ensure_installed = {
 
@@ -577,10 +561,12 @@ require("lazy").setup({
 
           "markdown", "markdown_inline", "bash", "vim", "vimdoc",
 
+          "kotlin", "swift", "objc",
+
         },
 
         sync_install = false,
-        auto_install = true,
+        auto_install = false,
 
         highlight = { enable = true },
 
@@ -702,9 +688,13 @@ require("lazy").setup({
 
     "tpope/vim-fugitive",
 
-    cmd = { "Git", "G" },
+    cmd = { "Git", "G", "GBrowse" },
 
   },
+
+  -- GitHub integration (GBrowse opens commits/files on github.com)
+
+  { "tpope/vim-rhubarb" },
 
   -- Color Previewer
 
