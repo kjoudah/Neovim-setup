@@ -688,13 +688,9 @@ require("lazy").setup({
 
     "tpope/vim-fugitive",
 
-    cmd = { "Git", "G", "GBrowse" },
+    cmd = { "Git", "G" },
 
   },
-
-  -- GitHub integration (GBrowse opens commits/files on github.com)
-
-  { "tpope/vim-rhubarb" },
 
   -- Color Previewer
 
@@ -814,6 +810,12 @@ require("lazy").setup({
           enable = true,
 
           ignore = false,
+
+        },
+
+        update_focused_file = {
+
+          enable = false,  -- don't auto-reveal on toggle; use <leader>sp to reveal explicitly
 
         },
 

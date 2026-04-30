@@ -57,11 +57,14 @@ vim.keymap.set("n", "<leader>fl", function()
 end, { desc = "Search literal string" })
 
 -- LSP + Telescope integration
-vim.keymap.set("n", "<leader>lr", ":Telescope lsp_references<CR>", { desc = "Find references" })
-vim.keymap.set("n", "<leader>ls", ":Telescope lsp_document_symbols<CR>", { desc = "Document symbols" })
-vim.keymap.set("n", "<leader>lw", ":Telescope lsp_workspace_symbols<CR>", { desc = "Workspace symbols" })
-vim.keymap.set("n", "<leader>ld", ":Telescope lsp_definitions<CR>", { desc = "Find definitions" })
-vim.keymap.set("n", "<leader>li", ":Telescope lsp_implementations<CR>", { desc = "Find implementations" })
+vim.keymap.set("n", "<leader>lr", ":Telescope lsp_references<CR>",        { desc = "Find references" })
+vim.keymap.set("n", "<leader>ls", ":Telescope lsp_document_symbols<CR>",   { desc = "Document symbols" })
+vim.keymap.set("n", "<leader>lw", ":Telescope lsp_workspace_symbols<CR>",  { desc = "Workspace symbols" })
+vim.keymap.set("n", "<leader>ld", ":Telescope lsp_definitions<CR>",        { desc = "Find definitions" })
+vim.keymap.set("n", "<leader>li", ":Telescope lsp_implementations<CR>",    { desc = "Find implementations" })
+
+-- gs = File structure popup (matches IdeaVim gs -> FileStructurePopup)
+vim.keymap.set("n", "gs", ":Telescope lsp_document_symbols<CR>", { desc = "File Structure" })
 
 -- Word deletion in insert mode
 vim.keymap.set("i", "<A-BS>", "<C-w>", { desc = "Delete word backwards" })
@@ -93,11 +96,30 @@ vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<CR>", { desc = "Git Commit" }
 vim.keymap.set("n", "<leader>gp", "<cmd>Git push<CR>", { desc = "Git Push" }) -- matches IdeaVim <leader>gp
 vim.keymap.set("n", "<leader>gl", "<cmd>Git pull<CR>", { desc = "Git Pull" })
 vim.keymap.set("n", "<leader>gb", "<cmd>G blame<CR>", { desc = "Git Blame" })
-vim.keymap.set({"n", "v"}, "<leader>go", "<cmd>GBrowse<CR>", { desc = "Git Open on GitHub" })
+-- Open the PR that contains the commit SHA on the current line (works in DiffviewFileHistory / git blame)
+vim.keymap.set("n", "<leader>gpr", function()
+  local line = vim.fn.getline(".")
+  local sha = line:match("%x%x%x%x%x%x%x+") or vim.fn.expand("<cword>")
+  if not sha or sha == "" then
+    vim.notify("No commit SHA found under cursor", vim.log.levels.WARN)
+    return
+  end
+  local url = vim.fn.system(
+    "gh api repos/{owner}/{repo}/commits/" .. sha .. "/pulls --jq '.[0].html_url' 2>/dev/null | tr -d '\\n'"
+  )
+  if url:match("^https") then
+    vim.fn.jobstart({ "open", url })
+    vim.notify("Opening PR: " .. url)
+  else
+    -- Fallback: open the commit page itself (GitHub will show the PR link)
+    vim.cmd("GBrowse " .. sha)
+  end
+end, { desc = "Open PR for commit under cursor" })
 
 -- LSP keymaps (mirrors IdeaVim: gd, gr, K, <leader>ca, <leader>rn, <leader>e)
 vim.keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>",   { desc = "Go to Definition" })
 vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>",    { desc = "Go to References" })
+vim.keymap.set("n", "gp", vim.lsp.buf.hover,                       { desc = "Peek / Documentation" })  -- matches IdeaVim gp (QuickImplementations)
 vim.keymap.set("n", "K",  vim.lsp.buf.hover,                       { desc = "Documentation" })
 vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action,         { desc = "Code Actions" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename,              { desc = "Rename Symbol" })
@@ -120,7 +142,8 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv",      { desc = "Move Selection D
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv",      { desc = "Move Selection Up" })
 
 -- nvim-tree
-vim.keymap.set("n", "<leader>ft", "<cmd>NvimTreeFindFile<CR>", { desc = "Toggle File Explorer (NvimTree)" })
+vim.keymap.set("n", "<leader>ft",  "<cmd>NvimTreeToggle<CR>",    { desc = "Toggle File Explorer (NvimTree)" })
+vim.keymap.set("n", "<leader>sp",  "<cmd>NvimTreeFindFile<CR>",  { desc = "Reveal file in sidebar" })  -- matches IdeaVim <leader>sp (SelectInProjectView)
 
 -- buffer and window management
 vim.keymap.set("n", "<leader>bo", ":%bd|e#<CR>", { desc = "Close all other buffers" })
