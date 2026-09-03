@@ -15,23 +15,10 @@ vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", { desc = "Search t
 vim.keymap.set("n", "<leader>fs", ":Telescope grep_string<CR>", { desc = "Find string under cursor (fuzzy)" })
 
 -- Telescope Git
-vim.keymap.set("n", "<leader>gs", ":Telescope git_status<CR>", { desc = "Git status" })
+vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Git status/commit (fugitive)" })  -- matches IdeaVim <leader>gs (ActivateCommitToolWindow)
 vim.keymap.set("n", "<leader>gD", "<cmd>DiffviewOpen main<CR>", { desc = "Diffview against main branch" })
 
-vim.keymap.set("n", "<leader>gd", function()
-  require("telescope.builtin").git_branches({
-    attach_mappings = function(prompt_bufnr, map_fn)
-      -- This function is called when the Telescope picker is opened
-      -- We are remapping the default action for <CR> (Enter)
-      map_fn("i", "<CR>", function(bufnr)
-        local selection = require("telescope.actions.state").get_selected_entry()
-        require("telescope.actions").close(bufnr)
-        require("diffview").open(selection.value .. "...HEAD")
-      end)
-      return true
-    end,
-  })
-end, { desc = "Diffview against selected branch" })
+vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Diff current file (fugitive)" })  -- matches IdeaVim <leader>gd (ShowDiff)
 
 -- A bonus keymap for viewing the history of the current file
 vim.keymap.set("n", "<leader>gfh", "<cmd>DiffviewFileHistory %<CR>", { desc = "Git File History (Diffview)"})
@@ -145,5 +132,18 @@ vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv",      { desc = "Move Selection U
 vim.keymap.set("n", "<leader>ft",  "<cmd>NvimTreeToggle<CR>",    { desc = "Toggle File Explorer (NvimTree)" })
 vim.keymap.set("n", "<leader>sp",  "<cmd>NvimTreeFindFile<CR>",  { desc = "Reveal file in sidebar" })  -- matches IdeaVim <leader>sp (SelectInProjectView)
 
--- buffer and window management
-vim.keymap.set("n", "<leader>bo", ":%bd|e#<CR>", { desc = "Close all other buffers" })
+-- buffer and window management (mirrors IdeaVim <leader>b… splitter maps)
+vim.keymap.set("n", "<leader>bo",  "<cmd>only<CR>",   { desc = "Focus mode: close other windows" })  -- matches IdeaVim <leader>bo (HideAllWindows)
+vim.keymap.set("n", "<leader>bsr", "<C-w>v<C-w>l",    { desc = "Split right & focus" })   -- IdeaVim <leader>bsr
+vim.keymap.set("n", "<leader>bsd", "<C-w>s<C-w>j",    { desc = "Split down & focus" })    -- IdeaVim <leader>bsd
+vim.keymap.set("n", "<leader>bmr", "<C-w>L",          { desc = "Move window to right" })  -- IdeaVim <leader>bmr
+vim.keymap.set("n", "<leader>bml", "<C-w>H",          { desc = "Move window to left" })   -- IdeaVim <leader>bml
+-- Close every other listed buffer but keep the current one untouched (preserves cursor/scroll).
+vim.keymap.set("n", "<leader>co", function()
+  local cur = vim.api.nvim_get_current_buf()
+  for _, b in ipairs(vim.api.nvim_list_bufs()) do
+    if b ~= cur and vim.bo[b].buflisted then
+      pcall(vim.api.nvim_buf_delete, b, {})
+    end
+  end
+end, { desc = "Close other buffers (keep current)" })  -- matches IdeaVim <leader>co (CloseAllEditorsButActive)

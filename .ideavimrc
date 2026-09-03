@@ -77,7 +77,6 @@ nmap <leader>gp <Action>(Vcs.Push)
 nmap <leader>ghs <Action>(Vcs.StageChangedLines)
 nmap <leader>ghr <Action>(Vcs.RollbackChangedLines)
 nmap <leader>gfh <Action>(Vcs.ShowTabbedFileHistory)
-nmap <leader>gpr <Action>(Github.View.Pull.Request)
 
 
 " =============================================================================
@@ -171,7 +170,7 @@ nmap <leader>q :q<CR>
 map <leader>F <Action>(OptimizeImports)<Action>(ReformatCode)
 
 " -- Search --
-map <leader>ff <Action>(SearchEverywhere)
+map <leader>ff <Action>(GotoFile)
 map <leader>fr <Action>(RecentFiles)
 map <leader>fg <Action>(FindInPath)
 map <leader>sp <Action>(SelectInProjectView) " Reveal in sidebar

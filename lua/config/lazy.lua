@@ -41,6 +41,20 @@ require("lazy").setup({
     config = function()
       local actions = require("telescope.actions")
 
+      -- Open the selected reference, then close every other listed buffer so the
+      -- buffer list doesn't pile up while jumping around references.
+      local function open_ref_and_close_others(prompt_bufnr)
+        actions.select_default(prompt_bufnr)
+        vim.schedule(function()
+          local keep = vim.api.nvim_get_current_buf()
+          for _, b in ipairs(vim.api.nvim_list_bufs()) do
+            if b ~= keep and vim.bo[b].buflisted then
+              pcall(vim.api.nvim_buf_delete, b, {})
+            end
+          end
+        end)
+      end
+
       require("telescope").setup({
 
         defaults = {
@@ -103,7 +117,13 @@ require("lazy").setup({
 
         pickers = {
 
-          lsp_references = { show_line = false },
+          lsp_references = {
+            show_line = false,
+            mappings = {
+              i = { ["<CR>"] = open_ref_and_close_others },
+              n = { ["<CR>"] = open_ref_and_close_others },
+            },
+          },
 
           lsp_document_symbols = { symbol_width = 50 },
 
@@ -467,6 +487,14 @@ require("lazy").setup({
       })
       vim.lsp.enable("sourcekit")
 
+      -- Configure Kotlin LSP (experimental, installed via: brew install JetBrains/utils/kotlin-lsp)
+      -- Uses nvim-lspconfig's built-in preset; requires kotlin-lsp on $PATH
+      -- Note: uses pull-based diagnostics (supported in Neovim 0.10+)
+      vim.lsp.config("kotlin_lsp", {
+        single_file_support = false,
+      })
+      vim.lsp.enable("kotlin_lsp")
+
       -- LSP Keymaps
 
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { silent = true })
@@ -767,6 +795,8 @@ require("lazy").setup({
     config = function()
       require("nvim-tree").setup({
 
+        sync_root_with_cwd = true,  -- re-root the tree whenever :cd changes the cwd
+
         sort_by = "case_sensitive",
 
         view = {
@@ -822,6 +852,34 @@ require("lazy").setup({
       })
     end,
 
+  },
+
+  -- Flash: easymotion-style labelled jump (mirrors IdeaVim `f`/`z` -> easymotion-s)
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = { modes = { char = { enabled = false } } },  -- we bind f/z ourselves, don't hijack f/F/t/T
+    keys = {
+      { "f", mode = { "n", "x" }, function() require("flash").jump() end, desc = "Flash jump" },
+      { "z", mode = { "o" },      function() require("flash").jump() end, desc = "Flash jump (operator)" },
+    },
+  },
+
+  -- Harpoon: pin + quick-jump between files (mirrors IdeaVim Harpooner)
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local harpoon = require("harpoon")
+      harpoon:setup()
+      vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, { desc = "Harpoon add file" })
+      vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon menu" })
+      vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon menu" })
+      for i = 1, 4 do
+        vim.keymap.set("n", "<leader>" .. i, function() harpoon:list():select(i) end, { desc = "Harpoon file " .. i })
+      end
+    end,
   },
 
 })
